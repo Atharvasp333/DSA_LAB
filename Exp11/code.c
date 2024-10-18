@@ -3,104 +3,93 @@
 
 #define MAX 100
 
-typedef struct {
-    int arr[MAX];
-    int top;
-} Stack;
+int graph[MAX][MAX], visited[MAX], queue[MAX], front = -1, rear = -1;
+int V;
 
-void initialize(Stack *s) {
-    s->top = -1;
+void enqueue(int vertex)
+{
+    if (rear == MAX - 1)
+        return;
+    if (front == -1)
+        front = 0;
+    rear++;
+    queue[rear] = vertex;
 }
 
-int isFull(Stack *s) {
-    return s->top == MAX - 1;
-}
-
-int isEmpty(Stack *s) {
-    return s->top == -1;
-}
-
-void push(Stack *s, int value) {
-    if (isFull(s)) {
-        printf("Stack Overflow\n");
-    } else {
-        s->arr[++(s->top)] = value;
-        printf("%d pushed to stack\n", value);
-    }
-}
-
-int pop(Stack *s) {
-    if (isEmpty(s)) {
-        printf("Stack Underflow\n");
+int dequeue()
+{
+    if (front == -1)
         return -1;
-    } else {
-        return s->arr[(s->top)--];
-    }
+    int vertex = queue[front];
+    if (front == rear)
+        front = rear = -1;
+    else
+        front++;
+    return vertex;
 }
 
-int peek(Stack *s) {
-    if (isEmpty(s)) {
-        printf("Stack is empty\n");
-        return -1;
-    } else {
-        return s->arr[s->top];
-    }
-}
+void bfs(int startVertex)
+{
+    for (int i = 0; i < V; i++)
+        visited[i] = 0;
+    enqueue(startVertex);
+    visited[startVertex] = 1;
 
-void display(Stack *s) {
-    if (isEmpty(s)) {
-        printf("Stack is empty\n");
-    } else {
-        printf("Stack elements are:\n");
-        for (int i = s->top; i >= 0; i--) {
-            printf("%d\n", s->arr[i]);
+    while (front != -1)
+    {
+        int vertex = dequeue();
+        printf("%d ", vertex);
+
+        for (int i = 0; i < V; i++)
+        {
+            if (graph[vertex][i] == 1 && !visited[i])
+            {
+                enqueue(i);
+                visited[i] = 1;
+            }
         }
     }
 }
 
-int main() {
-    Stack s;
-    int choice, value;
-    
-    initialize(&s);
-    
-    while (1) {
-        printf("\nMenu:\n");
-        printf("1. Push\n");
-        printf("2. Pop\n");
-        printf("3. Peek\n");
-        printf("4. Display\n");
-        printf("5. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-        
-        switch (choice) {
-            case 1:
-                printf("Enter value to push: ");
-                scanf("%d", &value);
-                push(&s, value);
-                break;
-            case 2:
-                value = pop(&s);
-                if (value != -1) {
-                    printf("Popped value: %d\n", value);
-                }
-                break;
-            case 3:
-                value = peek(&s);
-                if (value != -1) {
-                    printf("Top value: %d\n", value);
-                }
-                break;
-            case 4:
-                display(&s);
-                break;
-            case 5:
-                exit(0);
-            default:
-                printf("Invalid choice\n");
+void dfs(int vertex)
+{
+    visited[vertex] = 1;
+    printf("%d ", vertex);
+
+    for (int i = 0; i < V; i++)
+    {
+        if (graph[vertex][i] == 1 && !visited[i])
+        {
+            dfs(i);
         }
     }
-    
+}
+
+int main()
+{
+    int startVertex;
+
+    printf("Enter the number of vertices: ");
+    scanf("%d", &V);
+
+    printf("Enter the adjacency matrix:\n");
+    for (int i = 0; i < V; i++)
+        for (int j = 0; j < V; j++)
+            scanf("%d", &graph[i][j]);
+
+    printf("Enter the starting vertex for BFS: ");
+    scanf("%d", &startVertex);
+    printf("BFS Traversal: ");
+    bfs(startVertex);
+    printf("\n");
+
+    for (int i = 0; i < V; i++)
+        visited[i] = 0;
+    printf("Enter the starting vertex for DFS: ");
+    scanf("%d", &startVertex);
+    printf("DFS Traversal: ");
+    dfs(startVertex);
+    printf("\n");
+
     return 0;
 }
