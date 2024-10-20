@@ -1,123 +1,156 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX 100
+struct Node {
+    int data;
+    struct Node* next;
+};
 
-typedef struct {
-    int arr[MAX];
-    int front;
-    int rear;
-    int size;
-} CircularQueue;
-
-void initialize(CircularQueue *q) {
-    q->front = -1;
-    q->rear = -1;
-    q->size = 0;
+void insertAtBeginning(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = *head;
+    *head = newNode;
 }
 
-int isFull(CircularQueue *q) {
-    return q->size == MAX;
-}
-
-int isEmpty(CircularQueue *q) {
-    return q->size == 0;
-}
-
-void enqueue(CircularQueue *q, int value) {
-    if (isFull(q)) {
-        printf("Queue Overflow\n");
-    } else {
-        if (q->front == -1) {
-            q->front = 0;
-        }
-        q->rear = (q->rear + 1) % MAX;
-        q->arr[q->rear] = value;
-        q->size++;
-        printf("%d enqueued to queue\n", value);
+void insertAtEnd(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* last = *head;
+    newNode->data = data;
+    newNode->next = NULL;
+    if (*head == NULL) {
+        *head = newNode;
+        return;
     }
+    while (last->next != NULL)
+        last = last->next;
+    last->next = newNode;
 }
 
-int dequeue(CircularQueue *q) {
-    if (isEmpty(q)) {
-        printf("Queue Underflow\n");
-        return -1;
-    } else {
-        int value = q->arr[q->front];
-        q->front = (q->front + 1) % MAX;
-        q->size--;
-        if (isEmpty(q)) {
-            q->front = q->rear = -1;
-        }
-        return value;
+void insertAtPosition(struct Node** head, int data, int position) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    struct Node* temp = *head;
+    newNode->data = data;
+    if (position == 1) {
+        newNode->next = *head;
+        *head = newNode;
+        return;
     }
+    for (int i = 1; temp != NULL && i < position - 1; i++)
+        temp = temp->next;
+    if (temp == NULL)
+        return;
+    newNode->next = temp->next;
+    temp->next = newNode;
 }
 
-int peek(CircularQueue *q) {
-    if (isEmpty(q)) {
-        printf("Queue is empty\n");
-        return -1;
-    } else {
-        return q->arr[q->front];
-    }
+void deleteFromBeginning(struct Node** head) {
+    if (*head == NULL)
+        return;
+    struct Node* temp = *head;
+    *head = (*head)->next;
+    free(temp);
 }
 
-void display(CircularQueue *q) {
-    if (isEmpty(q)) {
-        printf("Queue is empty\n");
-    } else {
-        printf("Queue elements are:\n");
-        int i = q->front;
-        for (int count = 0; count < q->size; count++) {
-            printf("%d\n", q->arr[i]);
-            i = (i + 1) % MAX;
-        }
+void deleteFromEnd(struct Node** head) {
+    if (*head == NULL)
+        return;
+    struct Node* temp = *head;
+    struct Node* prev = NULL;
+    if (temp->next == NULL) {
+        free(temp);
+        *head = NULL;
+        return;
     }
+    while (temp->next != NULL) {
+        prev = temp;
+        temp = temp->next;
+    }
+    prev->next = NULL;
+    free(temp);
 }
+
+void deleteFromPosition(struct Node** head, int position) {
+    if (*head == NULL)
+        return;
+    struct Node* temp = *head;
+    if (position == 1) {
+        *head = temp->next;
+        free(temp);
+        return;
+    }
+    struct Node* prev = NULL;
+    for (int i = 1; temp != NULL && i < position; i++) {
+        prev = temp;
+        temp = temp->next;
+    }
+    if (temp == NULL)
+        return;
+    prev->next = temp->next;
+    free(temp);
+}
+
+void displayList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d -> ", node->data);
+        node = node->next;
+    }
+    printf("NULL\n");
+}
+
 
 int main() {
-    CircularQueue q;
-    int choice, value;
-
-    initialize(&q);
-
+    struct Node* head = NULL;
+    int choice, data, position;
     while (1) {
         printf("\nMenu:\n");
-        printf("1. Enqueue\n");
-        printf("2. Dequeue\n");
-        printf("3. Peek\n");
-        printf("4. Display\n");
-        printf("5. Exit\n");
+        printf("1. Insert at Beginning\n");
+        printf("2. Insert at End\n");
+        printf("3. Insert at Position\n");
+        printf("4. Delete from Beginning\n");
+        printf("5. Delete from End\n");
+        printf("6. Delete from Position\n");
+        printf("7. Display List\n");
+        printf("8. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
-
         switch (choice) {
             case 1:
-                printf("Enter value to enqueue: ");
-                scanf("%d", &value);
-                enqueue(&q, value);
+                printf("Enter data: ");
+                scanf("%d", &data);
+                insertAtBeginning(&head, data);
                 break;
             case 2:
-                value = dequeue(&q);
-                if (value != -1) {
-                    printf("Dequeued value: %d\n", value);
-                }
+                printf("Enter data: ");
+                scanf("%d", &data);
+                insertAtEnd(&head, data);
                 break;
             case 3:
-                value = peek(&q);
-                if (value != -1) {
-                    printf("Front value: %d\n", value);
-                }
+                printf("Enter data: ");
+                scanf("%d", &data);
+                printf("Enter position: ");
+                scanf("%d", &position);
+                insertAtPosition(&head, data, position);
                 break;
             case 4:
-                display(&q);
+                deleteFromBeginning(&head);
                 break;
             case 5:
+                deleteFromEnd(&head);
+                break;
+            case 6:
+                printf("Enter position: ");
+                scanf("%d", &position);
+                deleteFromPosition(&head, position);
+                break;
+            case 7:
+                displayList(head);
+                break;
+            case 8:
                 exit(0);
             default:
                 printf("Invalid choice\n");
         }
     }
-
     return 0;
 }
