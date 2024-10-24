@@ -1,13 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Structure of a node
 struct node {
     int data;
     struct node* next;
 };
 
-// Function to insert a node at the beginning
 struct node* insertAtBeginning(struct node* head, int data) {
     struct node* newNode = (struct node*)malloc(sizeof(struct node));
     newNode->data = data;
@@ -15,7 +13,6 @@ struct node* insertAtBeginning(struct node* head, int data) {
     return newNode;
 }
 
-// Function to insert a node at the end
 struct node* insertAtEnd(struct node* head, int data) {
     struct node* newNode = (struct node*)malloc(sizeof(struct node));
     struct node* temp = head;
@@ -31,7 +28,6 @@ struct node* insertAtEnd(struct node* head, int data) {
     return head;
 }
 
-// Function to insert a node at a given position
 struct node* insertAtPosition(struct node* head, int data, int pos) {
     struct node* newNode = (struct node*)malloc(sizeof(struct node));
     struct node* temp = head;
@@ -52,7 +48,6 @@ struct node* insertAtPosition(struct node* head, int data, int pos) {
     return head;
 }
 
-// Function to delete the first node
 struct node* deleteFirstNode(struct node* head) {
     if (head == NULL) {
         printf("List is empty!\n");
@@ -64,7 +59,6 @@ struct node* deleteFirstNode(struct node* head) {
     return head;
 }
 
-// Function to delete the last node
 struct node* deleteLastNode(struct node* head) {
     if (head == NULL) {
         printf("List is empty!\n");
@@ -83,7 +77,6 @@ struct node* deleteLastNode(struct node* head) {
     return head;
 }
 
-// Function to delete a node at a given position
 struct node* deleteAtPosition(struct node* head, int pos) {
     if (head == NULL) {
         printf("List is empty!\n");
@@ -109,7 +102,6 @@ struct node* deleteAtPosition(struct node* head, int pos) {
     return head;
 }
 
-// Function to display the linked list
 void display(struct node* head) {
     if (head == NULL) {
         printf("List is empty!\n");
@@ -124,7 +116,6 @@ void display(struct node* head) {
     printf("NULL\n");
 }
 
-// Main function with switch-case structure
 int main() {
     struct node* head = NULL;
     int choice, data, position;
